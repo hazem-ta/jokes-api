@@ -5,8 +5,10 @@ const app = express();
 const port = 3000;
 const masterKey = "4VGP2DN-6EWM4SJ-N6FGRHV-Z3PR3TT";
 
-app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(express.json())
+//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+
+
 
 
 //GET a random joke
@@ -37,6 +39,8 @@ app.get('/filter', (req, res) => {
 });
 
 
+
+
 //POST a new joke
 app.post("/jokes", (req, res) => {
   const newJoke = {
@@ -52,8 +56,10 @@ app.post("/jokes", (req, res) => {
 
 
 
+
+
 //PUT or a complete update a joke by id
-app.put("/jokes/:id",(req,res)=>{
+app.put('/jokes/:id',(req,res)=>{
   const id = parseInt(req.params.id);
    const newerJoke = {
     id: id,
@@ -87,15 +93,31 @@ app.patch("/jokes/:id",(req,res)=>{
 
 
 
-
-
-
 //DELETE Specific joke
+app.delete("/jokes/:id",(req,res)=>{
+  const id = parseInt(req.params.id);
+  const jokeIndex = jokes.findIndex((joke)=> joke.id === id);
+  jokes.splice(jokeIndex,1);
+  //res.json(jokes[jokeIndex-1], jokes[jokeIndex+1]);
+  res.sendStatus(200);
+});
 
 
 
+//DELETE All jokes
+app.delete("/jokes",(req,res)=>{
+  const useKey = req.query.key;
+  if (useKey==masterKey){
+    jokes=[];
+    res.sendStatus(200);
+  }else{
+    res.status(404).json({ error: `You are not authorised to perform this action.` });
+  }
 
-//8. DELETE All jokes
+});
+
+
+
 
 app.listen(port, () => {
   console.log(`Successfully started server on port ${port}.`);
