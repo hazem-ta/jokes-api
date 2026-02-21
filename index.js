@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 
 const app = express();
 const port = 3000;
-const masterKey = "4VGP2DN-6EWM4SJ-N6FGRHV-Z3PR3TT";
+const API_Key = process.env.API_KEY;
 
 //app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
@@ -107,7 +107,7 @@ app.delete("/jokes/:id",(req,res)=>{
 //DELETE All jokes
 app.delete("/jokes",(req,res)=>{
   const useKey = req.query.key;
-  if (useKey==masterKey){
+  if (useKey==API_Key){
     jokes=[];
     res.sendStatus(200);
   }else{
