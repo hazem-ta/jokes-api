@@ -1,93 +1,55 @@
-# Jokes API 😂 
+# Jokes REST API
 
-A simple **RESTful API** built with **Node.js** and **Express.js** that allows users to manage a collection of jokes.
-You can **create**, **read**, **update**, **delete**, and **filter** jokes by type.  
+A small REST API built with Node.js and Express for managing an in-memory collection of jokes. It demonstrates resource routing, filtering, full and partial updates, and protected destructive operations.
 
 ## Features
 
-* Get a random joke
-* Get all jokes or a specific joke by ID
-* Add a new joke
-* Update or partially update an existing joke
-* Delete a single joke or all jokes (with a master key)
-* Filter jokes by type (e.g., Science, Puns, Dad Jokes)
+- Retrieve all jokes, one joke by ID, or a random joke
+- Filter jokes by category
+- Create, replace, and partially update jokes
+- Delete individual jokes
+- Protect bulk deletion with a server-side key supplied through a request header
 
-
-## Technologies Used
-
-* [Node.js](https://nodejs.org/)
-* [Express.js](https://expressjs.com/)
-
-
-## Installation & Setup
-
-  ### 1. Clone the repository
+## Run locally
 
 ```bash
-git clone https://github.com/your-username/jokes-api.git
+git clone https://github.com/hazem-ta/jokes-api.git
 cd jokes-api
-```
-
-### 2. Install dependencies
-
-```bash
 npm install
 ```
 
-### 3. Run the server
+Copy `.env.example` to `.env`, replace the example key, then start the server:
 
 ```bash
-node index.js
+npm start
 ```
 
-Server will start on:
+The API runs at `http://localhost:3000` by default. Data is held in memory and resets when the server restarts.
 
-```
-http://localhost:3000
-```
+## Configuration
 
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `PORT` | HTTP server port | `3000` |
+| `MASTER_KEY` | Authorizes bulk deletion | None |
 
-## API Endpoints
+Never commit `.env`. Generate a long random value for `MASTER_KEY` outside the repository.
 
-### Get all jokes
+## Endpoints
 
-```
-GET /jokes
-```
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/jokes` | Return all jokes |
+| `GET` | `/jokes/:id` | Return one joke |
+| `GET` | `/random` | Return a random joke |
+| `GET` | `/filter?type=Science` | Filter by category |
+| `POST` | `/jokes` | Create a joke |
+| `PUT` | `/jokes/:id` | Replace a joke |
+| `PATCH` | `/jokes/:id` | Update selected fields |
+| `DELETE` | `/jokes/:id` | Delete one joke |
+| `DELETE` | `/jokes` | Delete all jokes |
 
-### Get a random joke
-
-```
-GET /random
-```
-
-### Get a specific joke by ID
-
-```
-GET /jokes/:id
-```
-
-Example:
-
-```
-GET /jokes/2
-```
-
-### Filter jokes by type
-
-```
-GET /filter?type=Science
-```
-
----
-
-### Add a new joke
-
-```
-POST /jokes
-```
-
-**Body (JSON):**
+Create and update requests accept JSON:
 
 ```json
 {
@@ -96,57 +58,17 @@ POST /jokes
 }
 ```
 
----
+Bulk deletion requires the configured key in a header:
 
-### Update (replace) a joke
-
-```
-PUT /jokes/:id
-```
-
-**Body (JSON):**
-
-```json
-{
-  "type": "Pun",
-  "text": "Why did the math book look sad? Because it had too many problems."
-}
+```bash
+curl -X DELETE http://localhost:3000/jokes \
+  -H "x-api-key: your-local-master-key"
 ```
 
----
+## Notes
 
-### Partially update a joke
+This project intentionally uses in-memory data to focus on HTTP and REST behavior. A production version would add persistent storage, schema validation, tests, rate limiting, and centralized error handling.
 
-```
-PATCH /jokes/:id
-```
+## Author
 
-**Body (JSON):**
-
-```json
-{
-  "text": "New version of the joke text only."
-}
-```
-
----
-
-### Delete a joke
-
-```
-DELETE /jokes/:id
-```
-
-Example:
-
-```
-DELETE /jokes/3
-```
-
----
-
-### Delete all jokes (requires a key)
-
-```
-DELETE /jokes?key=4VGP2DN-6EWM4SJ-N6FGRHV-Z3PR3TT
-```
+[Hazem Ahmed](https://github.com/hazem-ta)

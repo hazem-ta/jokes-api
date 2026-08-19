@@ -1,11 +1,11 @@
 import express from "express";
-import bodyParser from "body-parser";
+import "dotenv/config";
 
 const app = express();
-const port = 3000;
-const API_Key = process.env.API_KEY;
+const port = process.env.PORT || 3000;
+const masterKey = process.env.MASTER_KEY;
 
-//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -106,12 +106,12 @@ app.delete("/jokes/:id",(req,res)=>{
 
 //DELETE All jokes
 app.delete("/jokes",(req,res)=>{
-  const useKey = req.query.key;
-  if (useKey==API_Key){
+  const providedKey = req.get("x-api-key");
+  if (masterKey && providedKey === masterKey){
     jokes=[];
     res.sendStatus(200);
   }else{
-    res.status(404).json({ error: `You are not authorised to perform this action.` });
+    res.status(403).json({ error: `You are not authorised to perform this action.` });
   }
 
 });
